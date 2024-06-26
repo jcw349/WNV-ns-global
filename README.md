@@ -44,7 +44,7 @@ auspice -h
 
 ## File Structure
 * `Snakefile` - contains the augur / WNV-custom steps to run the build. Each snakemake command can be run as a bash command on it's own, but we use snakemake to simplify things.
-* `./data/*` - the input files. This includes the selected sequence data pulled from WNV4k project and NCBI: `./data/full_dataset.fasta` and `./data/headers.csv` (these are referenced in the `Snakefile`).
+* `./data/*` - the input files. This includes the selected sequence data pulled from WNV4k project and NCBI: `./data/full_dataset.fasta.gz` and `./data/headers.csv` (these are referenced in the `Snakefile`). Make sure to `gzip -d ./data/full_dataset.fasta.gz` before use.
 * `./scripts/*` custom WNV scripts. Called by commands in the `Snakefile.
 * `./results/` augur will produce a number of (intermediate) files including the alignment, newick trees etc. Not committed to github.
 * `./auspice/` will contain the JSONs necessary for visualisation by auspice.
