@@ -12,11 +12,14 @@ with open(sys.argv[1], 'r') as f:
   metadata = []
   for line in raw[1:]:
     metadata.append({header[i]:data for i, data in enumerate(line.split("\t"))})
+    
 
 f = open(sys.argv[2], "w")
 
 states = {
+	"USA": (37.0902,	-95.7129),
 	"NY": (40.7642499, -73.9545249),
+	"NYC": (40.7095340064939, -73.93966854),
 	"CA": (36.7014631, -118.7559973),
 	"TX": (31.8160381, -99.5120985),
 	"AZ": (34.395342, -111.7632754),
@@ -60,6 +63,12 @@ states = {
 	"OR": (44, -120.5),
 	"NH": (44, -71.5),
 	"US-VI": (17.789187, -64.7080574),
+        "MEX": (23.2127575,-113.2579052),
+        "BRA": (-9.6711986,-99.7670981),
+        "ARG": (-36.4741671,-84.8171707),
+        "ISR": (31.4018434,33.7625888),
+        "COL": (5.8422448,-85.0076846),
+        "CAN": (54.2213959,-116.7597504),
 	"CAN/QC": (45.508889, -73.561667),
 	"MEX/BCN": (30, -115.166667),
 	"MEX/CHH": (28.816667, -106.433333),
@@ -69,7 +78,7 @@ states = {
 	"COL/ANT": (6.223333, -75.58),
 	"BRA/ES": (-18.715833, -39.858889),
 	"ARG/B": (-34.25, -59.466667),
-	"ISR/D": (31, 35)
+	"ISR/D": (31.0, 35.0)
 }
 
 for key, value in states.items():
@@ -109,5 +118,3 @@ for key, value in divisions.items():
   f.write("{}\t{}\t{}\t{}\n".format("division", key, value[0], value[1]))
 for key, value in states.items():
   f.write("{}\t{}\t{}\t{}\n".format("division", key, value[0], value[1]))
-
-
