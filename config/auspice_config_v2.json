@@ -1,29 +1,36 @@
 {
-  "title": "Twenty years of West Nile Virus in the Americas",
+  "title": "West Nile Virus Global Reference Tree Based - All Lineages",
   "colorings": [
     {"key": "gt", "title": "Genotype", "type": "categorical"},
     {"key": "num_date", "title": "Sampling Date", "type": "continuous"},
     {"key": "country", "title": "Country", "type": "categorical"},
     {"key": "state", "title": "State", "type": "categorical"},
     {"key": "division", "title": "Division", "type": "categorical"},
-    {"key": "lineage", "title": "Strain", "type": "categorical"},
+    {"key": "traits", "title": "lineage-clade", "type": "categorical"},
+    {"key": "clade_membership", "title": "Lineage", "type": "categorical"},
+    {"key": "strains", "title": "Strain", "type": "categorical"},
     {"key": "author", "title": "Authors", "type": "categorical"},
-    {"key": "host", "title": "Host Species", "type": "categorical"}
+    {"key": "host", "title": "Host Species", "type": "categorical"},
+    {"key": "host_categories", "title": "Host Categories", "type": "categorical"}
   ],
   "geo_resolutions": [
+    "country",
     "state",
     "division"
   ],
   "maintainers": [
-    {"name": "Anderson Brito", "url": "http://grubaughlab.com/team/anderson-brito/"},
-    {"name": "James Hadfield", "url": "https://twitter.com/hamesjadfield"},
-    {"name": "Grubaugh Lab", "url": "http://grubaughlab.com/"}
+    {"name": "Jade Wang", "url": "https://www.nyc.gov/site/doh/health/health-topics/west-nile-virus.page"},
+    {"name": "Byeong Jeong (NJ DOH)"},
+    {"name": "Luc Gagne (MA DPH)"},
+    {"name": "Matthew Doucette (MA DPH)"}
   ],
   "filters": [
     "country",
     "state",
-    "authors",
-    "lineage"
+    "author",
+    "traits",
+    "strains",
+    "clade_membership"
   ],
   "display_defaults": {
     "color_by": "state",
