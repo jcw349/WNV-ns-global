@@ -1,8 +1,6 @@
 import os, sys, re
 from Bio import Entrez
 from Bio import SeqIO
-from datetime import datetime
-import time
 
 def choose_best_reference(record):
     if len(record.annotations["references"]):
@@ -17,7 +15,7 @@ def choose_best_reference(record):
     return False
 
 
-def query_genbank(accessions, email=None, retmax=10, n_entrez=10, gbdb="nuccore"):
+def query_genbank(accessions, email=None, retmax=10, n_entrez=50, gbdb="nuccore"):
     store = {}
     # https://www.biostars.org/p/66921/
     print("Querying {} genbank accessions {}...".format(len(accessions), accessions[:3]))
@@ -36,32 +34,33 @@ def query_genbank(accessions, email=None, retmax=10, n_entrez=10, gbdb="nuccore"
         if len(accs) == 0:
             return
         list_accs = list(accs)
-        res = Entrez.read(Entrez.esearch(db=gbdb, term=" ".join(list_accs), retmax=retmax))
+        res = Entrez.read(Entrez.esearch(db=gbdb, term=" ".join(list_accs), retmax=len(accessions)+1))
         if "ErrorList" in res:
             not_found = res["ErrorList"]["PhraseNotFound"][0]
             accs.remove(not_found)
             esearch(accs)
         else: # success :)
-            for i, accession in enumerate(list_accs):
+            for i, accession in enumerate(list_accs):        
                 gi_num = res["IdList"][i]
                 maps["accession_gi"][accession] = gi_num
                 maps["gi_accession"][gi_num] = accession
-
+                
     maps = {
       "accession_gi": {},
       "gi_accession": {}
     }
     print("Linking Accessions to GI numbers...")
     for idx, query_chunk in enumerate(queries):
-        print("\r\tprogress: {}/{}        ".format(idx+1, len(queries)), end="")
+        print("\r\tprogress: {}/{}        {} ".format(idx+1, len(queries),list(queries[idx])[:3]), end="")
         esearch(query_chunk)
+        
     print("")
 
 
     print("Getting ENTREZ records for GI numbers...")
     for idx, query_chunk in enumerate(queries):
       gi_numbers = [maps["accession_gi"][acc] for acc in query_chunk]
-      print("\r\tprogress: {}/{} (n={})       ".format(idx+1, len(queries), len(query_chunk)), end="")
+      print("\r\tprogress: {}/{} (n={})       {}".format(idx+1, len(queries), len(query_chunk),list(queries[idx])[0]), end="")
 
       try:
           search_handle = Entrez.epost(db=gbdb, id=",".join(gi_numbers))
@@ -102,12 +101,19 @@ def add_hardcoded_authors(metadata, missing):
       data["journal"] = "Unpublished"
       data["title"] = "WestNile 4K Project"
       data["url"] = "https://westnile4k.org/"
+    if re.match(r'^WNV\d+$', accession):
+      missing.remove(accession)
+      data["authors"] = "NYC-PHL"
+      data["journal"] = "Unpublished"
+      data["title"] = "NYC PHL West Nile Virus Sequencing Project"
+      data["url"] = "https://www.nyc.gov/site/doh/index.page"
 
 
 def add_authors_using_entrez(metadata, cache, missing):
     accessions = [x for x in list(missing) if len(x) > 5] # prune short strings which are obviously non-accession strings
     gb = query_genbank(accessions)
     refs = {accession: choose_best_reference(record) for accession, record in gb.items()}
+    
     for accession, entrezData in refs.items():
         metadata[accession]["authors"] = re.match(r'^([^,]*)', entrezData.authors).group(0) + " et al"
         metadata[accession]["journal"] = entrezData.journal
@@ -168,6 +174,7 @@ def write_cache(cache, path):
 
 def write_metadata(meta, header, path):
   print("Writing metadata out to {}".format(path))
+  
   with open(path, "w") as f:
     f.write("{}\n".format("\t".join(header)))
     for _, values in meta.items():
@@ -176,6 +183,7 @@ def write_metadata(meta, header, path):
 
 def fill_in_using_cache(meta, cache, missing):
   count = 0
+  
   for acc, data in cache.items():
     if acc in meta:
       missing.remove(acc)
@@ -184,10 +192,10 @@ def fill_in_using_cache(meta, cache, missing):
         meta[acc][key] = value
   print("Cache used for {} strains".format(count))
 
-previous = 1
 if __name__ == "__main__":
     meta_in,  meta_out = sys.argv[1:]
     cache_path = "results/author_cache.tsv"
+    
     print("Custom WNV script to add authors to metadata TSV via ENTREZ query")
     print("Input : {}, Cache: {}, Output: {}".format(meta_in, cache_path, meta_out))
     
@@ -195,12 +203,6 @@ if __name__ == "__main__":
     cache = read_cache(cache_path)
     fill_in_using_cache(meta, cache, missing)
     add_hardcoded_authors(meta, missing)
-    
-    current = time.time()
-    delay = 0.4
-    elapsed = current - previous
-    wait = delay - elapsed
-    
     add_authors_using_entrez(meta, cache, missing)
     write_cache(cache, cache_path)
     write_metadata(meta, header, meta_out)
