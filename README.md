@@ -1,10 +1,10 @@
-# Nextstrain build pipeline for the [WestNile 4K Project](https://westnile4k.org/)
+# Nextstrain build pipeline for all lineages found on the [WestNile 4K Project](https://westnile4k.org/) and [NCBI](https://www.ncbi.nlm.nih.gov/datasets/taxonomy/11082/)
 
-**This is the repository used to build [nextstrain.org/WNV/NA](https://nextstrain.org/WNV/NA)**
+**This is the repository used to build [nexctclade.org - WNV/global-lineages](https://clades.nextstrain.org/)**
 
 ---
 
-This repository contains the steps to use [augur]() to build the WNV/NA dataset. 
+This repository contains the steps to use [augur](https://docs.nextstrain.org/projects/augur/en/stable/index.html) to build the WNV/global-lineages as a West Nile virus (WNV) reference tree include all published lineages with +/- 10% genome size of the reference sequence [NC_009942.1](https://www.ncbi.nlm.nih.gov/nuccore/NC_009942.1/) for lineage designation.
 
 ## Installation / Set-Up
 
@@ -32,8 +32,8 @@ npm install --global auspice
 
 4. Clone this repository
 ```bash
-git clone git@github.com:grubaughlab/WNV-nextstrain.git
-cd WNV-nextstrain
+git clone git@github.com:jcw349/WNV-ns-global.git
+cd WNV-ns-global
 ```
 
 6. Check augur & auspice are installed:
@@ -51,7 +51,7 @@ auspice -h
 
 
 ## Run the build
-The `Snakefile` details each step in the buil (See that file for the specifics).
+The `Snakefile` details each step in the build (See that file for the specifics).
 As such, it should be as simple as running
 ```bash
 snakemake clean # remove any files from a previous build
