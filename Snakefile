@@ -237,7 +237,7 @@ rule traits:
             --confidence
         """
 
-rule export_v2:
+rule export_basic:
     message:
         """
         Exporting data files for for auspice using V2 JSON schema with all lineages
@@ -270,7 +270,7 @@ rule export_v2:
             --output {output.auspice}
         """
 
-rule export_v2:
+rule export_inferred:
     message:
         """
         Exporting data files for for auspice using V2 JSON schema with all lineages and inferred lineages
