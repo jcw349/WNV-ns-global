@@ -24,6 +24,8 @@ def fix_date(date_in):
       else:
         year = "20{}".format(year)
     return "{:0>2}-{:0>2}-{:0>2}".format(year, match.group(1), match.group(2))
+  if date_in == '?':
+    return "?"
   print("UNKNOWN DATE {}".format(date_in))
   sys.exit(2)
 
@@ -42,8 +44,14 @@ def parseFasta(path, sep="_", unknown="Unknown"):
                 'country': unknown,
                 'state': unknown,
                 'division': unknown,
+		'location': unknown,
                 'host': unknown,
-                'lineage': unknown,
+		'host_categories' : unknown,
+                'clade_membership' : unknown,
+                'strains': unknown,
+		'accessions': unknown,
+		'organization': unknown,
+		'DataSource': unknown,
                 'authors': unknown,
                 'journal': unknown,
                 'title': unknown,
@@ -53,8 +61,8 @@ def parseFasta(path, sep="_", unknown="Unknown"):
             }
             try:
               # most information will be extracted from the CSV file
-              metadata[strain]['longitude'] = header[5] if header[5] else unknown
-              metadata[strain]['latitude']  = header[6] if header[6] else unknown
+              metadata[strain]['longitude'] = header[len(header)-2] if len(header)>5 else unknown
+              metadata[strain]['latitude']  = header[len(header)-1] if len(header)>5 else unknown
             except IndexError:
               pass
               # print("WARNING: {} incomplete FASTA header".format(strain))
@@ -64,6 +72,7 @@ def addMetadataFromInputCSV(metadata, path, unknown="Unknown"):
     print("parsing hosts & lineage from ", path)
     hosts = {} # strain -> host map
     lineage = {} # strain -> lineage map
+    clade_membership = {} # strain -> clade map
     with open(path, "rU") as f:
         for line in f:
             fields = line.strip().split(',')
@@ -98,8 +107,18 @@ def addMetadataFromInputCSV(metadata, path, unknown="Unknown"):
               ("country", 2),
               ("state", 3),
               ("division", 4),
-              ("host", 5),
-              ("lineage", 6)
+	      ("location", 5),
+              ("host", 6),
+	      ("host_categories", 7),
+              ("clade_membership", 8),
+              ("strains", 9),
+	      ("accessions", 10),
+	      ("organization", 11),
+              ("DataSource", 12),
+              ("authors", 13),
+              ("latitude", 14),
+              ("longitude", 15),
+
             )
             for pair in pairs:
               name, idx = pair
@@ -108,6 +127,7 @@ def addMetadataFromInputCSV(metadata, path, unknown="Unknown"):
                   metadata[strain][name] = fields[idx]
                 elif metadata[strain][name] != fields[idx]:
                   print("CHECK: {} {} mismatch: {} - {}".format(strain, name, metadata[strain][name], fields[idx]))
+                  metadata[strain][name] = fields[idx]
 
 
 def filterByGenomeLength(seqs, metadata, minLength):
@@ -145,7 +165,7 @@ def add_state_to_division(metadata):
 if __name__ == "__main__":
     fasta_in, meta_in, fasta_out, meta_out = sys.argv[1:]
     print("Custom WNV parser which converts {} & {} -> {} & {}".format(fasta_in, meta_in, fasta_out, meta_out))
-    print("Expected metadata fields (CSV): [0]accession, [1]date, [2]country, [3]state, [4]location, [5]host, [6]lineage")
+    print("Expected metadata fields (CSV): [0]accession, [1]date, [2]country, [3]state, [4]division, [5]location, [6]host, [7] host_categories, [8] clade_membership, [9]strains, [10]accessions, [11]organization, [12]DataSource, [13]authors")
     print("Expected FASTA format: <accession>_<YYYY-MM-DD>_<country>_<state>_<loc>_<long>_<lat>")
     print("")
     print("Step1: collects fasta and CSV metadata")
