@@ -226,7 +226,7 @@ rule traits:
     output:
         node_data = "results/traits.json",
     params:
-        columns = "date clade_membership strain_membership"
+        columns = "date clade_membership strains lineages"
     shell:
         """
         augur traits \
