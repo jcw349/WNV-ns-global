@@ -35,7 +35,11 @@ def parseFasta(path, sep="_", unknown="Unknown"):
     metadata = {}
     with open(path, "rU") as f:
         for record in SeqIO.parse(f, "fasta"):
-            header = re.split('[|_]+', record.description) # fasta delimiters used include "_" and "|"
+            if re.match('^\w\w_[0-9]{6}\.[0-9]?.*', record.description): 
+                header = re.split('[ \.]+',record.description)
+            else: 
+                header = re.split('[|_]+', record.description) # fasta delimiters used include "_" and "|"
+
             strain = header[0].split(".")[0] # MF175814.1 -> MF175814 as this is what the CSV uses
             seqs[strain] = record.seq
             metadata[strain] = {
@@ -49,6 +53,7 @@ def parseFasta(path, sep="_", unknown="Unknown"):
 		'host_categories' : unknown,
                 'clade_membership' : unknown,
                 'strains': unknown,
+                'lineages': unknown,
 		'accessions': unknown,
 		'organization': unknown,
 		'DataSource': unknown,
@@ -70,9 +75,9 @@ def parseFasta(path, sep="_", unknown="Unknown"):
 
 def addMetadataFromInputCSV(metadata, path, unknown="Unknown"):
     print("parsing hosts & lineage from ", path)
-    hosts = {} # strain -> host map
-    lineage = {} # strain -> lineage map
-    clade_membership = {} # strain -> clade map
+    host = {} # strain -> host map
+    clade_membership = {} # clade -> lineage-clade map
+    strain_membership = {} # strain -> strain map
     with open(path, "rU") as f:
         for line in f:
             fields = line.strip().split(',')
@@ -112,12 +117,13 @@ def addMetadataFromInputCSV(metadata, path, unknown="Unknown"):
 	      ("host_categories", 7),
               ("clade_membership", 8),
               ("strains", 9),
-	      ("accessions", 10),
-	      ("organization", 11),
-              ("DataSource", 12),
-              ("authors", 13),
-              ("latitude", 14),
-              ("longitude", 15),
+              ("lineages",10),
+	      ("accessions", 11),
+	      ("organization", 12),
+              ("DataSource", 13),
+              ("authors", 14),
+              ("latitude", 15),
+              ("longitude", 16),
 
             )
             for pair in pairs:
@@ -165,7 +171,7 @@ def add_state_to_division(metadata):
 if __name__ == "__main__":
     fasta_in, meta_in, fasta_out, meta_out = sys.argv[1:]
     print("Custom WNV parser which converts {} & {} -> {} & {}".format(fasta_in, meta_in, fasta_out, meta_out))
-    print("Expected metadata fields (CSV): [0]accession, [1]date, [2]country, [3]state, [4]division, [5]location, [6]host, [7] host_categories, [8] clade_membership, [9]strains, [10]accessions, [11]organization, [12]DataSource, [13]authors")
+    print("Expected metadata fields (CSV): [0]strain_name, [1]date, [2]country, [3]state, [4]division, [5]location, [6]host, [7]host_categories, [8]clade_membership, [9]strains, [10]accessions, [11]organization, [12]DataSource, [13]authors")
     print("Expected FASTA format: <accession>_<YYYY-MM-DD>_<country>_<state>_<loc>_<long>_<lat>")
     print("")
     print("Step1: collects fasta and CSV metadata")
