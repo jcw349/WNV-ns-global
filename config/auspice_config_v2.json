@@ -7,11 +7,14 @@
     {"key": "state", "title": "State", "type": "categorical"},
     {"key": "division", "title": "Division", "type": "categorical"},
     {"key": "traits", "title": "lineage-clade", "type": "categorical"},
-    {"key": "clade_membership", "title": "Lineage", "type": "categorical"},
-    {"key": "strains", "title": "Strain", "type": "categorical"},
-    {"key": "author", "title": "Authors", "type": "categorical"},
+    {"key": "clade_membership", "title": "Clades", "type": "categorical"},
+    {"key": "strains", "title": "Strains", "type": "categorical"},
+    {"key": "lineages", "title": "Lineages", "type": "categorical"},
     {"key": "host", "title": "Host Species", "type": "categorical"},
-    {"key": "host_categories", "title": "Host Categories", "type": "categorical"}
+    {"key": "host_categories", "title": "Host Categories", "type": "categorical"},
+    {"key": "organization", "title": "Submitter", "type": "categorical"},
+    {"key": "DataSource", "title": "Data Source", "type": "categorical"},
+    {"key": "author", "title": "Authors", "type": "categorical"}
   ],
   "geo_resolutions": [
     "country",
@@ -27,13 +30,16 @@
   "filters": [
     "country",
     "state",
-    "author",
-    "traits",
+    "division",
+    "clade_membership",
     "strains",
-    "clade_membership"
+    "lineages",
+    "author",
+    "organization",
+    "DataSource"
   ],
   "display_defaults": {
-    "color_by": "state",
+    "color_by": "clade_membership",
     "map_triplicate": false,
     "geo_resolution": "state"
  }
