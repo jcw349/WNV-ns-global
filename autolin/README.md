@@ -40,8 +40,8 @@ Follow installation instructions to create conda environment.
 
 `conda activate autolin`
 
-`wget -P ./scripts https://github.com/jmcbroome/autolin/blob/32d9a52a744d762e243cd83449972aab4d2fa556/propose_sublineages.py`
+`wget -P ./scripts https://github.com/jmcbroome/autolin/blob/main/propose_sublineages.py`
 
-`python3 ./scripts/propose_sublineages.py -i ./results/usher_wnv_clades.pb -o ./results/autolin_wnv.pb -l ./results/autolin_wnv.labels.txt --recursive -m 3 -t 0 -f 0`
+`python3 ./scripts/propose_sublineages.py -i ./results/usher_wnv_clades.pb -o ./results/autolin_wnv.pb -l ./results/autolin_wnv_lineages.txt --recursive -m 3 -t 0 -f 0`
 
 A tab-delimited file, "autolin_wnv.labels.txt" will be created, which can be added to the ./results/metadata.tsv under the `lineages` column prior to the final `augur export v2` to create the auspice json file.
