@@ -37,7 +37,11 @@ Otherwise skip this step to start the lineage designation from A.0, A.1, A.2, et
 Once the clade designations have been annotated onto the MATree, [autolin](https://github.com/jmcbroome/autolin) can now use the annotated clades in the MATree to generate new labels for sublineages.
 
 Follow installation instructions to create conda environment. 
+
 `conda activate autolin`
+
+`wget -P ./scripts https://github.com/jmcbroome/autolin/blob/32d9a52a744d762e243cd83449972aab4d2fa556/propose_sublineages.py`
+
 `python3 ./scripts/propose_sublineages.py -i ./results/usher_wnv_clades.pb -o ./results/autolin_wnv.pb -l ./results/autolin_wnv.labels.txt --recursive -m 3 -t 0 -f 0`
 
 A tab-delimited file, "autolin_wnv.labels.txt" will be created, which can be added to the ./results/metadata.tsv under the `lineages` column prior to the final `augur export v2` to create the auspice json file.
