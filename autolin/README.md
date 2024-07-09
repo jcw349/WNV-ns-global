@@ -28,8 +28,10 @@ At the minimum, a VCF and newick (nwk) tree are required to build a MATree profo
 ### B) Add clade annotations
 To add annotations to MATree, [matUtils annotate](https://usher-wiki.readthedocs.io/en/latest/matUtils.html#annotate) is required.
 
-If a list of lineage designations are already known, use the "config/clades.tsv" file to guide the autolin lineage designation. The file format is tab-delimited with `clades` {i.e. Ia.4.WN02} in the first column and the `strain` in the second column {i.e. KJ501251} (this is the first column of the augur metadata).
+If a list of lineage designations are already known, use the "config/clades.tsv" file to guide the autolin lineage designation. The file format is tab-delimited with `clades` {i.e. Ia.WN02} in the first column and the `strain` in the second column {i.e. KJ501251} (this is the first column of the augur metadata).
 Otherwise skip this step to start the lineage designation from A.0, A.1, A.2, etc.
+
+*Note:* if the list of clades is generated in Excel, you will need to make sure in text editors that the tabs are `\t` and the end of line are `\n` instead of `\r`
 
 `matUtils annotate -i ./results/usher_wnv.pb -o ./results/usher_wnv_clades.pb -c ./config/clades.tsv` 
 
