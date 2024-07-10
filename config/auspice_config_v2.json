@@ -14,7 +14,11 @@
     {"key": "host_categories", "title": "Host Categories", "type": "categorical"},
     {"key": "organization", "title": "Submitter", "type": "categorical"},
     {"key": "DataSource", "title": "Data Source", "type": "categorical"},
-    {"key": "author", "title": "Authors", "type": "categorical"}
+    {"key": "author", "title": "Authors", "type": "categorical"},
+	{"key": "usher_clades", "title": "UShER Clades", "type": "categorical"},
+	{"key": "autolin_level0", "title": "Autolin_Clades", "type": "categorical"},
+	{"key": "autolin_levelMAX", "title": "Autolin_Lineages", "type": "categorical"},
+	{"key": "autolin_NEW", "title": "Autolin_New", "type": "categorical"}
   ],
   "geo_resolutions": [
     "country",
@@ -22,10 +26,12 @@
     "division"
   ],
   "maintainers": [
-    {"name": "Jade Wang", "url": "https://www.nyc.gov/site/doh/health/health-topics/west-nile-virus.page"},
+    {"name": "StaPH-B", "url": "https://staphb.org/"},
+	{"name": "Jade Wang", "url": "https://www.nyc.gov/site/doh/health/health-topics/west-nile-virus.page"},
     {"name": "Byeong Jeong (NJ DOH)"},
     {"name": "Luc Gagne (MA DPH)"},
-    {"name": "Matthew Doucette (MA DPH)"}
+    {"name": "Matthew Doucette (MA DPH)"},
+	{"name": "..."}
   ],
   "filters": [
     "country",
@@ -36,7 +42,8 @@
     "lineages",
     "author",
     "organization",
-    "DataSource"
+    "DataSource",
+	"autolin_NEW"
   ],
   "display_defaults": {
     "color_by": "clade_membership",
