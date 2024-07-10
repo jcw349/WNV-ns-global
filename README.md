@@ -1,6 +1,6 @@
 # Nextstrain build pipeline for sequences representing all lineages published on the [WestNile 4K Project](https://westnile4k.org/) and [NCBI](https://www.ncbi.nlm.nih.gov/datasets/taxonomy/11082/)
 
-**This is the repository used to build [nexctclade.org - WNV/global-lineages](https://clades.nextstrain.org/)**
+**This is the repository used to build [nexctclade.org / staph-b / WNV / WNV-global ](https://clades.nextstrain.org/)**
 
 ---
 
