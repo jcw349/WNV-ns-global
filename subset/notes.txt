@@ -1,0 +1,41 @@
+# Subset with matUtils
+
+1. Get sample IDs of subset data from Nextstrain trees for clade I (root: AY765264) and clade II (root: AY765264)
+> list the IDs in clade-*/samples.tsv
+
+2. Create MATree
+> usher -t results/tree.nwk -v results/global_samples.vcf -o wnv-global_assign.pb -d subset/
+  or
+> usher -t results/timetree.nwk -v test/global_samples.vcf -o wnv-global_assign.pb -d subset/
+
+3. Extract subset trees
+Clade-I
+> matUtils extract -i usher/wnv-global_assign.pb -s clade-I/samples.tsv -o wnv-I.pb -d usher-I
+
+Clade-II
+> matUtils extract -i usher/wnv-global_assign.pb -s clade-II/samples.tsv -o wnv-II.pb -d usher-II
+
+4. Annotate
+Clade-I
+> matUtils annotate -i usher-I/wnv-I.pb -c config/clades_published.tsv -o wnv-I_annot.pb  -d usher-I/ -u mutations.tsv
+
+Clade-II
+> matUtils annotate -i usher-II/wnv-II.pb -c config/clades_published.tsv -o wnv-II_annot.pb  -d usher-II/ -u mutations.tsv
+
+5. Autolin
+Clade-I
+> ...?
+
+Clade-II
+> ...?
+
+
+  later
+    . Filter sequence and metadata for clades
+> augur filter --metadata results/metadata.tsv \
+> 	--sequences results/sequences.fasta \
+> 	--sequence-index results/sequence-index \
+> 	--output-metadata clade-*/metadata.tsv \
+> 	--output-sequences clade-*/sequences.fasta \
+>   --exclude clade-*/exclude.tsv \
+> 	--include clade-*/samples.tsv
