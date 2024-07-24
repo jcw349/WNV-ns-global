@@ -24,10 +24,10 @@ Clade-II
 
 5. Autolin
 Clade-I
-> ...?
+> python3 ./scripts/propose_sublineages.py -i usher-I/wnv-I_annot.pb -r -o autolin/clade-I.pb -d autolin/I_clades.tsv -l autolin/I_labels.tsv
 
 Clade-II
-> ...?
+> python3 ./scripts/propose_sublineages.py -i usher-II/wnv-II_annot.pb -r -o autolin/clade-II.pb -d autolin/II_clades.tsv -l autolin/II_labels.tsv
 
 
   later
