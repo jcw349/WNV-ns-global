@@ -128,6 +128,21 @@ rule align:
             --fill-gaps
         """
 
+rule vcf:
+    message: "Create VCF files for MATree"
+    input:
+        alignment = rules.align.output.alignment
+    output:
+        vcf_file = "results/merged.vcf",
+    params:
+        reference = "NC_009942.1"
+    shell:
+        """
+        faToVcf -ref={params.reference} \
+            {input.alignment} \
+            {output.vcf_file}
+        """
+
 rule tree:
     message: "Building tree"
     input:
@@ -179,9 +194,7 @@ rule refine:
             --date-confidence \
             --root {params.root}
         """
-###
-# ADD UShER and autolin
-###
+
 rule ancestral:
     message: 
         """
@@ -332,76 +345,6 @@ rule export_inferred:
         auspice_config = "config/auspice_config_v2.json"
     output:
         auspice = rule.all.auspice_tree_inferred
-    shell:
-        """
-        augur export v2 \
-            --tree {input.tree} \
-            --metadata {input.metadata} \
-            --node-data {input.branch_lengths} {input.nt_muts} {input.aa_muts} {input.clades} {input.strains} {input.traits} \
-            --colors {input.colors} \
-            --auspice-config {input.auspice_config} \
-            --lat-longs {input.lat_longs} \
-            --output {output.auspice}
-        """
-rule export_I:
-    message:
-        """
-        Exporting data files for for auspice using V2 JSON schema with lineage I and inferred lineage I
-        Including
-          - branch length {input.branch_lengths}
-          - nucleotide {input.nt_muts}
-          - amino acid {input.aa_muts}
-          - using {params.inference} to infer ancestral maximum likelihood ancestral sequence states
-        """
-    input:
-        tree = rules.refined_I.output.tree,
-        metadata = rules.add_authors.output.metadata,
-        branch_lengths = rules.refined_I.output.node_data,
-        strains = rules.strains_I.output.node_data,
-	lineages = rules.lineages_I.output.node_data,
-        traits = rules.traits_I.output.node_data,
-        nt_muts = rules.ancestral_I.output.node_data,
-        aa_muts = rules.translate_I.output.node_data,
-        colors = rules.create_colors.output.colors,
-        lat_longs = rules.create_lat_longs.output.lat_longs,
-        auspice_config = "config/auspice_config_v2.json"
-    output:
-        auspice = rule.all.auspice_tree_1
-    shell:
-        """
-        augur export v2 \
-            --tree {input.tree} \
-            --metadata {input.metadata} \
-            --node-data {input.branch_lengths} {input.nt_muts} {input.aa_muts} {input.clades} {input.strains} {input.traits} \
-            --colors {input.colors} \
-            --auspice-config {input.auspice_config} \
-            --lat-longs {input.lat_longs} \
-            --output {output.auspice}
-        """
-rule export_II:
-    message:
-        """
-        Exporting data files for for auspice using V2 JSON schema with lineage I and inferred lineage I
-        Including
-          - branch length {input.branch_lengths}
-          - nucleotide {input.nt_muts}
-          - amino acid {input.aa_muts}
-          - using {params.inference} to infer ancestral maximum likelihood ancestral sequence states
-        """
-    input:
-        tree = rules.refined_II.output.tree,
-        metadata = rules.add_authors.output.metadata,
-        branch_lengths = rules.refined_II.output.node_data,
-        strains = rules.strains_II.output.node_data,
-	lineages = rules.lineages_II.output.node_data,
-        traits = rules.traits_II.output.node_data,
-        nt_muts = rules.ancestral_II.output.node_data,
-        aa_muts = rules.translate_II.output.node_data,
-        colors = rules.create_colors.output.colors,
-        lat_longs = rules.create_lat_longs.output.lat_longs,
-        auspice_config = "config/auspice_config_v2.json"
-    output:
-        auspice = rule.all.auspice_tree_2
     shell:
         """
         augur export v2 \
