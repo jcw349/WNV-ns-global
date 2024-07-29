@@ -1,7 +1,9 @@
 rule all:
     input:
-        auspice_tree = "auspice/WNV-ns-global-lineages.json"
-        auspice_tree_inferred = "auspice/WNV-ns-global-infer.json"
+        auspice_tree = "auspice/WNV-global.json"
+        auspice_tree_inferred = "auspice/WNV-global-infer.json"
+        auspice_tree_1 = "auspice/WNV-1.json"
+	auspice_tree_2 = "auspice/WNV-2.json"
 
 rule files:
     params:
@@ -9,9 +11,11 @@ rule files:
         input_metadata = "data/headers.csv",
         reference = "config/reference.gb",
         auspice_config = "config/auspice_config_v2.json",
-        lat_longs = "config/lat_longs.tsv"
-		exclude= "config/exclude.txt"
-		include= "config/include.txt"
+        clades = "config/clade.tsv",
+        strains = "config/strain.tsv
+        lat_longs = "config/lat_longs.tsv",
+        exclude= "config/exclude.txt",
+        include= "config/include.txt"
 
 files = rules.files.params
 
@@ -56,28 +60,28 @@ rule seq_index:
     shell:
         """
         augur index --sequences {input.sequences} \
-			--output {output.index}
+            --output {output.index}
         """
 
 rule filter_data:
     message: "Filter sequences by inclusion / exclusion criteria for {input.metadata} -> {output.metadata} "
     input:
         sequences = rules.parse.output.sequences
-		metadata = rules.add_authors.output.metadata
+	metadata = rules.add_authors.output.metadata
         index = rule.seq_index.output.index
-		include = files.include
-		exclude = files.exclude
+        include = files.include
+        exclude = files.exclude
     output:
         sequences = "results/sequences.fasta"
-		metadata = "results/metadata.tsv"
+	metadata = "results/metadata.tsv"
     shell:
         """
         augur filter --metadata {input.metadata} \
-			--sequences {input.sequences} \
-			--output-metadata {output.metadata} \
-			--output-sequences {output.sequences} \
-			--exclude {input.exclude} \
-			--include {input.include} 
+            --sequences {input.sequences} \
+            --output-metadata {output.metadata} \
+            --output-sequences {output.sequences} \
+            --exclude {input.exclude} \
+            --include {input.include} 
         """
 
 rule create_colors:
@@ -219,7 +223,39 @@ rule translate:
             --reference-sequence {input.reference} \
             --output {output.node_data} 
         """
+rule clades:
+    message: "Setting clade membership using clade defining mutations"
+    input:
+        tree = rules.refine.output.tree,
+        aa_nodes = rules.translate.output.node_data,
+        aa_clades = files.clades
+    output:
+        node_data = "results/clade_membership.json",
+    shell:
+        """
+        augur clades \
+            --tree {input.tree} \
+            --mutations {input.aa_nodes} \
+            --clades {input.aa_clades} \
+            --output {output.node_data} 
+        """
 
+rule strains:
+    message: "Setting strain membership using clade defining mutations"
+    input:
+        tree = rules.refine.output.tree,
+        aa_nodes = rules.translate.output.node_data,
+        aa_strains = files.strains
+    output:
+        node_data = "results/strain_membership.json",
+    shell:
+        """
+        augur clades \
+            --tree {input.tree} \
+            --mutations {input.aa_nodes} \
+            --clades {input.aa_strains} \
+            --output {output.node_data} 
+        """
 rule traits:
     message: "Inferring ancestral traits for {params.columns!s}"
     input:
@@ -286,6 +322,8 @@ rule export_inferred:
         tree = rules.refine.output.tree,
         metadata = rules.add_authors.output.metadata,
         branch_lengths = rules.refine.output.node_data,
+        clades = rules.clades.output.node_data,
+        strains = rules.strains.output.node_data,
         traits = rules.traits.output.node_data,
         nt_muts = rules.ancestral.output.node_data,
         aa_muts = rules.translate.output.node_data,
@@ -299,7 +337,77 @@ rule export_inferred:
         augur export v2 \
             --tree {input.tree} \
             --metadata {input.metadata} \
-            --node-data {input.branch_lengths} {input.nt_muts} {input.aa_muts} {input.traits} \
+            --node-data {input.branch_lengths} {input.nt_muts} {input.aa_muts} {input.clades} {input.strains} {input.traits} \
+            --colors {input.colors} \
+            --auspice-config {input.auspice_config} \
+            --lat-longs {input.lat_longs} \
+            --output {output.auspice}
+        """
+rule export_I:
+    message:
+        """
+        Exporting data files for for auspice using V2 JSON schema with lineage I and inferred lineage I
+        Including
+          - branch length {input.branch_lengths}
+          - nucleotide {input.nt_muts}
+          - amino acid {input.aa_muts}
+          - using {params.inference} to infer ancestral maximum likelihood ancestral sequence states
+        """
+    input:
+        tree = rules.refined_I.output.tree,
+        metadata = rules.add_authors.output.metadata,
+        branch_lengths = rules.refined_I.output.node_data,
+        strains = rules.strains_I.output.node_data,
+	lineages = rules.lineages_I.output.node_data,
+        traits = rules.traits_I.output.node_data,
+        nt_muts = rules.ancestral_I.output.node_data,
+        aa_muts = rules.translate_I.output.node_data,
+        colors = rules.create_colors.output.colors,
+        lat_longs = rules.create_lat_longs.output.lat_longs,
+        auspice_config = "config/auspice_config_v2.json"
+    output:
+        auspice = rule.all.auspice_tree_1
+    shell:
+        """
+        augur export v2 \
+            --tree {input.tree} \
+            --metadata {input.metadata} \
+            --node-data {input.branch_lengths} {input.nt_muts} {input.aa_muts} {input.clades} {input.strains} {input.traits} \
+            --colors {input.colors} \
+            --auspice-config {input.auspice_config} \
+            --lat-longs {input.lat_longs} \
+            --output {output.auspice}
+        """
+rule export_II:
+    message:
+        """
+        Exporting data files for for auspice using V2 JSON schema with lineage I and inferred lineage I
+        Including
+          - branch length {input.branch_lengths}
+          - nucleotide {input.nt_muts}
+          - amino acid {input.aa_muts}
+          - using {params.inference} to infer ancestral maximum likelihood ancestral sequence states
+        """
+    input:
+        tree = rules.refined_II.output.tree,
+        metadata = rules.add_authors.output.metadata,
+        branch_lengths = rules.refined_II.output.node_data,
+        strains = rules.strains_II.output.node_data,
+	lineages = rules.lineages_II.output.node_data,
+        traits = rules.traits_II.output.node_data,
+        nt_muts = rules.ancestral_II.output.node_data,
+        aa_muts = rules.translate_II.output.node_data,
+        colors = rules.create_colors.output.colors,
+        lat_longs = rules.create_lat_longs.output.lat_longs,
+        auspice_config = "config/auspice_config_v2.json"
+    output:
+        auspice = rule.all.auspice_tree_2
+    shell:
+        """
+        augur export v2 \
+            --tree {input.tree} \
+            --metadata {input.metadata} \
+            --node-data {input.branch_lengths} {input.nt_muts} {input.aa_muts} {input.clades} {input.strains} {input.traits} \
             --colors {input.colors} \
             --auspice-config {input.auspice_config} \
             --lat-longs {input.lat_longs} \
