@@ -1,6 +1,6 @@
 ##### EXCLUDE REFERENCE
 #HM051416
-# NC_009942
+NC_009942
 
 ##### EXCLUDE: Modified nucleic acids
 FV537222
