@@ -55,7 +55,7 @@ The `Snakefile` details each step in the build (See that file for the specifics)
 As such, it should be as simple as running
 ```bash
 snakemake clean # remove any files from a previous build
-snakemake # run the build pipeline. Takes about 40min
+snakemake --force export_basic export_inferred --rerun-incomplete
 ```
 and the entire build will run through.
 
