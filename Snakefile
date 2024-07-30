@@ -1,8 +1,8 @@
 rule all:
-    input:
-        auspice_tree = "auspice/WNV-global.json"
-        auspice_tree_inferred = "auspice/WNV-global-infer.json"
-        auspice_tree_1 = "auspice/WNV-1.json"
+    params:
+        auspice_tree = "auspice/WNV-global.json",
+        auspice_tree_inferred = "auspice/WNV-global-infer.json",
+        auspice_tree_1 = "auspice/WNV-1.json",
 	auspice_tree_2 = "auspice/WNV-2.json"
 
 rule files:
@@ -12,7 +12,7 @@ rule files:
         reference = "config/reference.gb",
         auspice_config = "config/auspice_config_v2.json",
         clades = "config/clade.tsv",
-        strains = "config/strain.tsv
+#        strains = "config/strain.tsv",
         lat_longs = "config/lat_longs.tsv",
         exclude= "config/exclude.txt",
         include= "config/include.txt"
@@ -66,13 +66,13 @@ rule seq_index:
 rule filter_data:
     message: "Filter sequences by inclusion / exclusion criteria for {input.metadata} -> {output.metadata} "
     input:
-        sequences = rules.parse.output.sequences
-	metadata = rules.add_authors.output.metadata
-        index = rule.seq_index.output.index
-        include = files.include
+        sequences = rules.parse.output.sequences,
+	metadata = rules.add_authors.output.metadata,
+        index = rules.seq_index.output.index,
+        include = files.include,
         exclude = files.exclude
     output:
-        sequences = "results/sequences.fasta"
+        sequences = "results/sequences.fasta",
 	metadata = "results/metadata.tsv"
     shell:
         """
@@ -88,7 +88,7 @@ rule create_colors:
     message:
         "Creating custom color scale in {output.colors}"
     input:
-        metadata = rules.filter_data.output.metadata,
+        metadata = rules.filter_data.output.metadata
     output:
         colors = "results/colors.tsv"
     shell:
@@ -100,7 +100,7 @@ rule create_lat_longs:
     message:
         "Creating lat/longs in {output.lat_longs}"
     input:
-        metadata = rules.filter_data.output.metadata,
+        metadata = rules.filter_data.output.metadata
     output:
         lat_longs = "results/lat_longs.tsv"
     shell:
@@ -133,7 +133,7 @@ rule vcf:
     input:
         alignment = rules.align.output.alignment
     output:
-        vcf_file = "results/merged.vcf",
+        vcf_file = "results/merged.vcf"
     params:
         reference = "NC_009942.1"
     shell:
@@ -204,8 +204,8 @@ rule ancestral:
         """
     input:
         tree = rules.refine.output.tree,
-        alignment = rules.align.output
-        root = rules.file.reference
+        alignment = rules.align.output,
+        root = file.reference
     output:
         node_data = "results/nt_muts.json"
     params:
@@ -253,29 +253,30 @@ rule clades:
             --output {output.node_data} 
         """
 
-rule strains:
-    message: "Setting strain membership using clade defining mutations"
-    input:
-        tree = rules.refine.output.tree,
-        aa_nodes = rules.translate.output.node_data,
-        aa_strains = files.strains
-    output:
-        node_data = "results/strain_membership.json",
-    shell:
-        """
-        augur clades \
-            --tree {input.tree} \
-            --mutations {input.aa_nodes} \
-            --clades {input.aa_strains} \
-            --output {output.node_data} 
-        """
+#rule strains:
+#    message: "Setting strain membership using clade defining mutations"
+#    input:
+#        tree = rules.refine.output.tree,
+#        aa_nodes = rules.translate.output.node_data,
+#        aa_strains = files.strains
+#    output:
+#        node_data = "results/strain_membership.json",
+#    shell:
+#        """
+#        augur clades \
+#            --tree {input.tree} \
+#            --mutations {input.aa_nodes} \
+#            --clades {input.aa_strains} \
+#            --output {output.node_data} 
+#        """
+
 rule traits:
     message: "Inferring ancestral traits for {params.columns!s}"
     input:
         tree = rules.refine.output.tree,
         metadata = rules.filter_data.output.metadata
     output:
-        node_data = "results/traits.json",
+        node_data = "results/traits.json"
     params:
         columns = "country clade_membership strains lineages"
     shell:
@@ -308,7 +309,7 @@ rule export_basic:
         lat_longs = rules.create_lat_longs.output.lat_longs,
         auspice_config = "config/auspice_config_v2.json"
     output:
-        auspice = rule.all.auspice_tree
+        auspice = rules.all.output.auspice_tree
     shell:
         """
         augur export v2 \
@@ -336,7 +337,7 @@ rule export_inferred:
         metadata = rules.add_authors.output.metadata,
         branch_lengths = rules.refine.output.node_data,
         clades = rules.clades.output.node_data,
-        strains = rules.strains.output.node_data,
+#        strains = rules.strains.output.node_data,
         traits = rules.traits.output.node_data,
         nt_muts = rules.ancestral.output.node_data,
         aa_muts = rules.translate.output.node_data,
@@ -344,13 +345,13 @@ rule export_inferred:
         lat_longs = rules.create_lat_longs.output.lat_longs,
         auspice_config = "config/auspice_config_v2.json"
     output:
-        auspice = rule.all.auspice_tree_inferred
+        auspice = rules.all.output.auspice_tree_inferred
     shell:
         """
         augur export v2 \
             --tree {input.tree} \
             --metadata {input.metadata} \
-            --node-data {input.branch_lengths} {input.nt_muts} {input.aa_muts} {input.clades} {input.strains} {input.traits} \
+            --node-data {input.branch_lengths} {input.nt_muts} {input.aa_muts} {input.clades} {input.traits} \
             --colors {input.colors} \
             --auspice-config {input.auspice_config} \
             --lat-longs {input.lat_longs} \
