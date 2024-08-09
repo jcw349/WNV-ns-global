@@ -10,15 +10,24 @@
     {"key": "clade_membership", "title": "Clades", "type": "categorical"},
     {"key": "strains", "title": "Strains", "type": "categorical"},
     {"key": "lineages", "title": "Lineages", "type": "categorical"},
+    {"key": "parsimony", "title": "Parsimony Score", "type": "continuous"},
+    {"key": "usher_annotation", "title": "UShER Lineages", "type": "categorical"},
+    {"key": "autolin", "title": "New Lineages", "type": "categorical"},
+    {"key": "lineage_name", "title": "Autolin Lineages", "type": "categorical"},
+    {"key": "Level_1", "title": "Lineage Level 1", "type": "categorical"},
+    {"key": "Level_2", "title": "Lineage Level 2", "type": "categorical"},
+    {"key": "Level_3", "title": "Lineage Level 3", "type": "categorical"},
+    {"key": "Level_4", "title": "Lineage Level 4", "type": "categorical"},
+    {"key": "Level_5", "title": "Lineage Level 5", "type": "categorical"},
+    {"key": "Level_6", "title": "Lineage Level 6", "type": "categorical"},
+    {"key": "Level_7", "title": "Lineage Level 7", "type": "categorical"},
+    {"key": "Level_8", "title": "Lineage Level 8", "type": "categorical"},
+    {"key": "lbi", "title": "LBI", "type": "continuous"},
     {"key": "host", "title": "Host Species", "type": "categorical"},
     {"key": "host_categories", "title": "Host Categories", "type": "categorical"},
     {"key": "organization", "title": "Submitter", "type": "categorical"},
     {"key": "DataSource", "title": "Data Source", "type": "categorical"},
-    {"key": "author", "title": "Authors", "type": "categorical"},
-	{"key": "usher_clades", "title": "UShER Clades", "type": "categorical"},
-	{"key": "autolin_level0", "title": "Autolin_Clades", "type": "categorical"},
-	{"key": "autolin_levelMAX", "title": "Autolin_Lineages", "type": "categorical"},
-	{"key": "autolin_NEW", "title": "Autolin_New", "type": "categorical"}
+    {"key": "author", "title": "Authors", "type": "categorical"}
   ],
   "geo_resolutions": [
     "country",
@@ -27,11 +36,11 @@
   ],
   "maintainers": [
     {"name": "StaPH-B", "url": "https://staphb.org/"},
-	{"name": "Jade Wang", "url": "https://www.nyc.gov/site/doh/health/health-topics/west-nile-virus.page"},
+    {"name": "Jade Wang", "url": "https://www.nyc.gov/site/doh/health/health-topics/west-nile-virus.page"},
     {"name": "Byeong Jeong (NJ DOH)"},
     {"name": "Luc Gagne (MA DPH)"},
     {"name": "Matthew Doucette (MA DPH)"},
-	{"name": "..."}
+    {"name": "..."}
   ],
   "filters": [
     "country",
@@ -40,14 +49,52 @@
     "clade_membership",
     "strains",
     "lineages",
+    "usher_annotation",
+    "autolin",
+    "lineage_name",
+    "Level_1",
+    "Level_2",
+    "Level_3",
+    "Level_4",
+    "Level_5",
+    "Level_6",
+    "Level_7",
+    "Level_8",
+    "lbi",
     "author",
     "organization",
-    "DataSource",
-	"autolin_NEW"
+    "DataSource"
   ],
   "display_defaults": {
     "color_by": "clade_membership",
     "map_triplicate": false,
     "geo_resolution": "state"
- }
+  },
+  "extensions": {
+    "nextclade": {
+      "clade_node_attrs": [
+        {
+          "name": "clade_membership",
+          "displayName": "Clades",
+          "description": "Clades as defined in literature",
+          "hideInWeb": false,
+          "skipAsReference": true
+        },
+        {
+          "name": "usher_annotation",
+          "displayName": "Lineages",
+          "description": "Lineages inferred by UShER",
+          "hideInWeb": false,
+          "skipAsReference": true
+        },
+        {
+          "name": "lineage_name",
+          "displayName": "AutoLineages",
+          "description": "Lineages inferred by UShER and new lineages suggested by Autolin",
+          "hideInWeb": false,
+          "skipAsReference": true
+        }
+      ]
+    }
+  }
 }
