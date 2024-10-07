@@ -9,7 +9,7 @@ FV537224
 FV537223
 
 
-##### EXCLUDE: Duplicate
+##### EXCLUDE: Duplicate sequences to WN4K sequences
 
 MH507714
 MH507641
