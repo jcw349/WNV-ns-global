@@ -36,7 +36,7 @@ Otherwise skip this step to start the lineage designation from A.0, A.1, A.2, et
 
 *Note:* if the list of clades is generated in Excel, you will need to make sure in text editors that the tabs are `\t` and the end of line are `\n` instead of `\r`
 
-`matUtils annotate -i ./results/usher_wnv.pb -o ./results/usher_wnv_clades.pb -c ./config/clades.tsv` 
+`matUtils annotate -i ./matree/usher_wnv.pb -o ./matree/usher_wnv_clades.pb -c ./config/clades.tsv` 
 
 ### C) Run autolin to designate lineages
 Once the clade designations have been annotated onto the MATree, [autolin](https://github.com/jmcbroome/autolin) can now use the annotated clades in the MATree to generate new labels for sublineages.
