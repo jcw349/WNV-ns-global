@@ -24,9 +24,9 @@ At the minimum, a VCF and newick (nwk) tree are required to build a MATree profo
 
 `faToVCF ./input/aligned.fasta ./intermediate/merged.vcf`
 
-3. nwk tree: The auspice snakemake pipeline for the StaPH-B WNV-global build creates a "results/tree.nwk" file that has been refined using `augur refine`
+3. nwk tree: The auspice snakemake pipeline for the StaPH-B WNV-global build creates a "results/tree_raw.nwk" file that has not been refined using `augur refine`
 
-`usher -t ./input/tree.nwk -v ./intermediate/merged.vcf -o ./matree/usher_wnv.pb -d ./intermedaite/`
+`usher -t ./input/tree_raw.nwk -v ./intermediate/merged.vcf -o ./matree/usher_wnv.pb -d ./intermedaite/`
 
 ### B) Add clade annotations
 To add annotations to MATree, [matUtils annotate](https://usher-wiki.readthedocs.io/en/latest/matUtils.html#annotate) is required.
